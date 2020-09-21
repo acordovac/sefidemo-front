@@ -1,0 +1,36 @@
+<div>
+
+  <h4>Edición de Usuario</h4>
+  <mat-form-field [formGroup]="form">
+    <div class="container">
+
+      <div class="row">
+        <label>
+          Nombre:
+          <input matInput type="text" formControlName="nombre">
+        </label>
+
+      </div>
+      <div class="row">
+        <label>
+          Primer Apellido:
+          <input matInput type="text" formControlName="primerApellido">
+        </label>
+
+      </div>
+      <div class="row">
+        <label>
+          Segundo Apellido:
+          <input matInput type="text" formControlName="segundoApellido">
+        </label>
+
+      </div>
+    </div>
+  </mat-form-field>
+  <div>
+    <button mat-button color="primary" (click)="closeBtn()">Cancelar</button>
+    <button mat-button color="accent" >Editar</button>
+  </div>
+
+</div>
+

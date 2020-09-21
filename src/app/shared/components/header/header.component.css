@@ -1,0 +1,27 @@
+.header {
+  background-color: #f2e9e0 !important;
+  padding: 0.5em 0 ;
+}
+
+.img-header {
+  max-height: 3em;
+}
+
+.menu {
+  background-color: #5c3327;
+  color: white;
+  font-weight: bold;
+
+}
+
+.pill {
+  width: 33%;
+  text-align: center;
+  font-family: 'ubuntuu', sans-serif !important;
+  padding: 1.2em 0 ;
+}
+.pill:hover {
+  background-color: #754c24 !important;
+  cursor: pointer;
+
+}
