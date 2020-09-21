@@ -10,9 +10,9 @@ import {User} from '../../../shared/models/user';
 })
 export class EditUserComponent implements OnInit, AfterViewInit {
 
-  private form: FormGroup;
+  public form: FormGroup;
   public closeAction: EventEmitter<boolean> = new EventEmitter<boolean>();
-  public saveAction: EventEmitter<User> = new EventEmitter<boolean>();
+  public saveAction: EventEmitter<User> = new EventEmitter<User>();
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
