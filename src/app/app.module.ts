@@ -11,6 +11,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatListModule} from '@angular/material/list';
 import {HttpClientModule} from '@angular/common/http';
 import { UserPipe } from './shared/pipes/user/user.pipe';
+import { LoginComponent } from './shared/components/login/login.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { UserPipe } from './shared/pipes/user/user.pipe';
     HeaderComponent,
     FooterComponent,
     UserPipe,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,

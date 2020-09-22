@@ -14,7 +14,7 @@
     </div>
   </div>
 </header>
-<div class="menu">
+<div class="menu" *ngIf="userIsLoggedIn()">
   <div class="row">
     <div class="pill" routerLink="/home">INICIO</div>
     <div class="pill" routerLink="/admin">ADMINISTRACIÓN</div>
