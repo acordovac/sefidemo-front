@@ -11,8 +11,6 @@ import {MatCardModule} from '@angular/material/card';
 import {MatListModule} from '@angular/material/list';
 import {HttpClientModule} from '@angular/common/http';
 import { UserPipe } from './shared/pipes/user/user.pipe';
-import { EditUserComponent } from './modules/user/edit-user/edit-user.component';
-import { ListUserComponent } from './modules/user/list-user/list-user.component';
 
 @NgModule({
   declarations: [
