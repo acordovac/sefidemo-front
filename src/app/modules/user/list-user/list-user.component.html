@@ -1,15 +1,28 @@
-<div class="row">
-  <button mat-button>Regresar</button>
-</div>
-<div class="row">
+<div class="bckg container">
+  <div class="space"></div>
   <div class="col">
-    <mat-selection-list #list [multiple]="false" *ngIf="userList.getValue() != []">
-      <mat-list-option
-        *ngFor="let user of userList.getValue()"
-        [value]="user"
-        (click)="editUser(user)">
-        {{ user.nombre }}</mat-list-option>
-    </mat-selection-list>
+    <h2 class="ocre">Administración de usuarios</h2>
+    <mat-divider></mat-divider>
   </div>
+  <div class="space"></div>
+  <div class="row justify-content-end">
+    <div class="col-auto">
 
+      <button mat-button>Regresar</button>
+      <button mat-button mat-raised-button color="ssa-accent">Nuevo</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <mat-selection-list #list [multiple]="false" *ngIf="userList.getValue() != []">
+        <mat-list-option
+          *ngFor="let user of userList.getValue()"
+          [value]="user"
+          (click)="editUser(user)">
+          {{ getNameLabel(user)}}</mat-list-option>
+      </mat-selection-list>
+    </div>
+
+  </div>
+  <div class="space"></div>
 </div>

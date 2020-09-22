@@ -1,9 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'bootstrap/dist/css/bootstrap-grid.min.css';
 
-html, body { height: 100%; }
+html, body { height: 100%; background-color: #F9F9F9}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .space {
   height: 2em;
+}
+
+.ocre {
+  color: #7a7249;
+}
+
+.mat-ssa-accent {
+  background-color: #5c3327;
+  color: #fff;
+}
+
+.mat-ssa-accent:hover {
+  background-color: #754c24;
+  color: #fff;
 }

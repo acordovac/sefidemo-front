@@ -25,6 +25,10 @@ export class ListUserComponent implements OnInit, AfterViewInit {
   }
 
 
+  public getNameLabel(user: User): string {
+    return `${user.nombre} ${user.primerApellido} ${user.segundoApellido}`;
+  }
+
 
 
   public getUserList(): void {
