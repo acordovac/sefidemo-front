@@ -12,6 +12,13 @@ import {MatListModule} from '@angular/material/list';
 import {HttpClientModule} from '@angular/common/http';
 import { UserPipe } from './shared/pipes/user/user.pipe';
 import { LoginComponent } from './shared/components/login/login.component';
+import {MatDividerModule} from "@angular/material/divider";
+import {MatDialogModule} from "@angular/material/dialog";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {MatButtonModule} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatInputModule} from "@angular/material/input";
 
 @NgModule({
   declarations: [
@@ -31,6 +38,14 @@ import { LoginComponent } from './shared/components/login/login.component';
   //  material modules
     MatCardModule,
     MatListModule,
+    MatDividerModule,
+    MatDialogModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatInputModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

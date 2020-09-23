@@ -4,9 +4,9 @@ import {HomeComponent} from './modules/home/home.component';
 import {LoginComponent} from "./shared/components/login/login.component";
 
 const routes: Routes = [
-  {path: '', pathMatch: 'full', redirectTo: 'home'},
-  {path: 'home', component: HomeComponent},
+  {path: '', pathMatch: 'full', redirectTo: 'login'},
   {path: 'login', component: LoginComponent},
+  {path: 'home', component: HomeComponent},
   {path: 'admin', loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule)},
 ];
 
