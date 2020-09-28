@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import {MatDialog} from "@angular/material/dialog";
+import {LocationComponent} from "../../shared/components/location/location.component";
 
+declare var ol: any;
 
 @Component({
   selector: 'app-home',
@@ -8,9 +11,28 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  public map: any;
+
+  constructor(
+    private dialog: MatDialog
+  ) { }
 
   ngOnInit(): void {
+    // this.initMap();
   }
+
+  ngAfterViewInit(): void {
+
+  }
+
+  openMap(): void {
+    let mapDialog = this.dialog.open(LocationComponent, {
+      width: '75%',
+      maxWidth: '90%'
+
+    });
+
+  }
+
 
 }

@@ -19,6 +19,8 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatInputModule} from "@angular/material/input";
+import { LocationComponent } from './shared/components/location/location.component';
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
@@ -28,6 +30,7 @@ import {MatInputModule} from "@angular/material/input";
     FooterComponent,
     UserPipe,
     LoginComponent,
+    LocationComponent,
   ],
   imports: [
     BrowserModule,
@@ -46,6 +49,10 @@ import {MatInputModule} from "@angular/material/input";
     MatIconModule,
     MatProgressSpinnerModule,
     MatInputModule,
+    MatSnackBarModule
+
+    // OSM
+
   ],
   providers: [],
   bootstrap: [AppComponent]
