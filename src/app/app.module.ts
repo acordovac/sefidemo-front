@@ -21,6 +21,7 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatInputModule} from "@angular/material/input";
 import { LocationComponent } from './shared/components/location/location.component';
 import {MatSnackBarModule} from "@angular/material/snack-bar";
+import { MapDialogComponent } from './shared/components/map-dialog/map-dialog.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
     UserPipe,
     LoginComponent,
     LocationComponent,
+    MapDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -49,7 +51,8 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
     MatIconModule,
     MatProgressSpinnerModule,
     MatInputModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+
 
     // OSM
 

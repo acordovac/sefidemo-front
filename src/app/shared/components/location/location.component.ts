@@ -1,9 +1,25 @@
-import {AfterViewInit, Component, Inject, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, Input, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 import {Clipboard} from "@angular/cdk/clipboard";
 import {MatSnackBar} from "@angular/material/snack-bar";
 
-declare var ol: any;
+import Map from 'ol/Map';
+import View from 'ol/View';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
+import Style from 'ol/style/Style';
+import Icon from 'ol/style/Icon';
+import OSM from 'ol/source/OSM';
+import TileLayer from 'ol/layer/Tile';
+import Feature from 'ol/Feature';
+import * as olProj from 'ol/proj';
+import Point from "ol/geom/Point";
+import XYZ from "ol/source/XYZ";
+
+
+
+export const DEFAULT_HEIGHT = '500px';
+export const DEFAULT_WIDTH = '500px';
 
 @Component({
   selector: 'app-location',
@@ -12,78 +28,99 @@ declare var ol: any;
 })
 export class LocationComponent implements OnInit, AfterViewInit {
 
-  public map: any;
+  public map: Map;
   public clickedLocation = '';
+  public coordinates = [];
+  public crumLon = -96.935521;
+  public crumLat = 19.551221;
+  public mapEl: HTMLElement;
+
+
+  @Input() lat: number;
+  @Input() lon: number;
+  @Input() zoom: number;
+  @Input() width: string | number = DEFAULT_WIDTH;
+  @Input() height: string | number = DEFAULT_HEIGHT;
+
 
   constructor(
-    @Inject(MAT_DIALOG_DATA)
-    private data: any,
+    // @Inject(MAT_DIALOG_DATA)
+    // private data: any,
     private clipboard: Clipboard,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private elRef: ElementRef
   ) { }
 
 
   ngOnInit(): void {
-
+    // this.initMap();
+    this.mapEl = this.elRef.nativeElement.querySelector('#map');
+    this.setSize();
   }
+
 
   ngAfterViewInit(): void {
     this.initMap();
   }
 
-  private initMap(): void {
-    this.map = new ol.Map({
-      layers: [new ol.layer.Tile({source: new ol.source.OSM()})],
-      target: 'map2',
-      view: new ol.View({
-        // projection: 'EPSG:4326',
-        center: ol.proj.fromLonLat([-96.935521,19.551221]),
-        zoom: 15})
-    });
 
+
+  private initMap(): void {
+    // this.map = new Map({
+    //   target: 'map2',
+    //   layers: [new TileLayer({source: new OSM()})],
+    //   view: new View({
+    //     // projection: 'EPSG:4326',
+    //     center: olProj.fromLonLat([this.crumLon, this.crumLat]),
+    //     zoom: 15})
+    // });
+    this.map = new Map({
+      target: 'map',
+      layers: [
+        new TileLayer({
+           source: new OSM()
+          // source: new XYZ({
+          //   url: 'https://{a-c}.tile.openstreetmap.com/{z}/{x}/{y}.png'
+          // })
+        })
+      ],
+      view: new View({
+        center: olProj.fromLonLat([this.crumLon, this.crumLat]),
+        zoom: 10
+      }),
+      // controls: defaultControls({})
+    });
   }
-  //
-  // private layersClick() {
-  //   let that = this;
-  //   let olCtrl = ol.Control.Click = ol.Class(ol.Control, {
-  //
-  //     defaultHandlerOptions: {
-  //       'single': true,
-  //       'double': false,
-  //       'pixelTolerance': 0,
-  //       'stopSingle': false,
-  //       'stopDouble': false
-  //     },
-  //
-  //     initialize: function(options) {
-  //       this.handlerOptions = ol.Util.extend(
-  //         {}, this.defaultHandlerOptions
-  //       );
-  //       ol.Control.prototype.initialize.apply(
-  //         this, arguments
-  //       );
-  //       this.handler = new ol.Handler.Click(
-  //         this, {
-  //           'click': this.trigger
-  //         }, this.handlerOptions
-  //       );
-  //     },
-  //
-  //     trigger: function(e) {
-  //       var lonlat = that.map.getLonLatFromViewPortPx(e.xy);
-  //       // alert("You clicked near " + lonlat.lat + " N, " +  + lonlat.lon + " E");
-  //       that.clickedLocation = `${lonlat.lat}, ${lonlat.lon}`;
-  //
-  //     }
-  //
-  //   });
-  // }
+
+  private setMapTarget() {
+    // this.map.setTarget('map2');
+  }
 
   catchCoordinates(event) {
-    // console.log(event);
-    let coordsArray = this.map.getEventCoordinate(event);
-    console.log();
-    this.clickedLocation = `${coordsArray[0]}, ${coordsArray[1]}`;
+    console.log(event);
+    // console.log(ol);
+    // console.log(ol.proj.getPointResolution());
+    // ol.proj.useGeographic();
+    this.coordinates = this.map.getEventCoordinate(event);
+    console.log(this.coordinates);
+    this.clickedLocation = `${this.coordinates[0]}, ${this.coordinates[1]}`;
+    // this.clickedLocation = `${parseFloat(this.coordinates[0])}, ${parseFloat(this.coordinates[1])}`;
+
+    this.renderMarker();
+  }
+
+  public renderMarker() {
+    let layer = new VectorLayer({
+      source: new VectorSource({
+        features: [
+          new Feature({
+            geometry: new Point( olProj.fromLonLat( [this.coordinates[0], this.coordinates[1]]) )
+            // geometry: new olProj.geom.Point( olProj.proj.fromLonLat( [this.crumLon, this.crumLat]) )
+          })
+        ]
+      })
+    });
+    this.map.addLayer(layer);
   }
 
   public toClipboard() {
@@ -91,4 +128,21 @@ export class LocationComponent implements OnInit, AfterViewInit {
     this.snackbar.open('Coordinadas copiadas a portapapeles', 'X', {duration: 3500})
   }
 
+  private setSize(): void {
+    if (this.mapEl) {
+      const styles = this.mapEl.style;
+      styles.height = coerceCssPixelValue(this.height || DEFAULT_HEIGHT);
+      styles.width = coerceCssPixelValue(this.width || DEFAULT_WIDTH);
+    }
+  }
+
+}
+
+const cssUnitsPattern = /([A-Za-z%]+)$/;
+
+function coerceCssPixelValue(value:any ): string {
+  if (value == null) {
+    return '';
+  }
+  return cssUnitsPattern.test(value) ? value : `${value}px`;
 }
