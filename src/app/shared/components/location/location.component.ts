@@ -1,7 +1,6 @@
-import {AfterViewInit, Component, ElementRef, Inject, Input, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA} from "@angular/material/dialog";
-import {Clipboard} from "@angular/cdk/clipboard";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import {AfterViewInit, Component, ElementRef, Input, OnInit} from '@angular/core';
+import {Clipboard} from '@angular/cdk/clipboard';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -13,39 +12,55 @@ import OSM from 'ol/source/OSM';
 import TileLayer from 'ol/layer/Tile';
 import Feature from 'ol/Feature';
 import * as olProj from 'ol/proj';
-import Point from "ol/geom/Point";
-import XYZ from "ol/source/XYZ";
+import Point from 'ol/geom/Point';
+import XYZ from 'ol/source/XYZ';
+import MousePosition from 'ol/control/MousePosition';
+import {transform} from 'ol/proj';
 
 
 
 export const DEFAULT_HEIGHT = '500px';
 export const DEFAULT_WIDTH = '500px';
+export const DEFAULT_ZOOM = 16;
 
+
+/**
+ * Componente que genera un mapa con imágenes de OpenStreetMap
+ * a través de la api OpenLaayers
+ */
 @Component({
-  selector: 'app-location',
+  selector: 'osm-location',
   templateUrl: './location.component.html',
   styleUrls: ['./location.component.css']
 })
 export class LocationComponent implements OnInit, AfterViewInit {
 
-  public map: Map;
+  private map: Map;
+  private markerLayer: VectorLayer;
+  private iconStyle = new Style({
+    image: new Icon({
+      anchor: [12, 12],
+      anchorXUnits: 'pixels',
+      anchorYUnits: 'pixels',
+      src: 'data/icon.png',
+    }),
+  });
+
+
   public clickedLocation = '';
   public coordinates = [];
-  public crumLon = -96.935521;
-  public crumLat = 19.551221;
+  private crumCoordinates = [-96.935521, 19.551221]; // long lat
   public mapEl: HTMLElement;
 
 
   @Input() lat: number;
   @Input() lon: number;
-  @Input() zoom: number;
+  @Input() zoom: number | number = DEFAULT_ZOOM;
   @Input() width: string | number = DEFAULT_WIDTH;
   @Input() height: string | number = DEFAULT_HEIGHT;
 
 
   constructor(
-    // @Inject(MAT_DIALOG_DATA)
-    // private data: any,
     private clipboard: Clipboard,
     private snackbar: MatSnackBar,
     private elRef: ElementRef
@@ -55,62 +70,71 @@ export class LocationComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     // this.initMap();
     this.mapEl = this.elRef.nativeElement.querySelector('#map');
-    this.setSize();
+    this.setMapSize(); // important to render map
+    this.initMarkerLayer(); // setup vectorLayer for marker
   }
 
 
   ngAfterViewInit(): void {
-    this.initMap();
+    this.initMap(); // wait to safely initialize
   }
 
-
-
   private initMap(): void {
-    // this.map = new Map({
-    //   target: 'map2',
-    //   layers: [new TileLayer({source: new OSM()})],
-    //   view: new View({
-    //     // projection: 'EPSG:4326',
-    //     center: olProj.fromLonLat([this.crumLon, this.crumLat]),
-    //     zoom: 15})
-    // });
     this.map = new Map({
       target: 'map',
       layers: [
         new TileLayer({
+          preload: Infinity,
            source: new OSM()
-          // source: new XYZ({
-          //   url: 'https://{a-c}.tile.openstreetmap.com/{z}/{x}/{y}.png'
-          // })
         })
       ],
       view: new View({
-        center: olProj.fromLonLat([this.crumLon, this.crumLat]),
-        zoom: 10
+        projection: 'EPSG:3857', // se utiliza la projección default para cargar Tiles
+        center: olProj.fromLonLat(this.crumCoordinates),
+        zoom: this.zoom
       }),
-      // controls: defaultControls({})
     });
   }
 
-  private setMapTarget() {
-    // this.map.setTarget('map2');
+  private initMarkerLayer(): VectorLayer {
+    const iconFeature = new Feature({
+      geometry: new Point([0, 0]),
+      name: 'Incident',
+    });
+
+    // const iconStyle = new Style({
+    //   image: new Icon({
+    //     anchor: [0.5, 46],
+    //     anchorXUnits: 'fraction',
+    //     anchorYUnits: 'pixels',
+    //     src: 'data/icon.png',
+    //   }),
+    // });
+
+    iconFeature.setStyle(this.iconStyle);
+
+    const vectorSource = new VectorSource({
+      features: [iconFeature],
+    });
+
+    const vectorLayer = new VectorLayer({
+      source: vectorSource,
+    });
+    return vectorLayer;
   }
 
-  catchCoordinates(event) {
-    console.log(event);
-    // console.log(ol);
-    // console.log(ol.proj.getPointResolution());
-    // ol.proj.useGeographic();
-    this.coordinates = this.map.getEventCoordinate(event);
-    console.log(this.coordinates);
+  public catchCoordinates(event: any): void {
+    // Se convierte a las coordenadas correctas
+    this.coordinates = transform(
+      this.map.getEventCoordinate(event),
+      'EPSG:3857',
+      'EPSG:4326');
     this.clickedLocation = `${this.coordinates[0]}, ${this.coordinates[1]}`;
-    // this.clickedLocation = `${parseFloat(this.coordinates[0])}, ${parseFloat(this.coordinates[1])}`;
-
     this.renderMarker();
   }
 
-  public renderMarker() {
-    let layer = new VectorLayer({
+  public renderMarker(): void {
+    const layer = new VectorLayer({
       source: new VectorSource({
         features: [
           new Feature({
@@ -120,15 +144,17 @@ export class LocationComponent implements OnInit, AfterViewInit {
         ]
       })
     });
+
+    // get markerLayer, set the point coords in
     this.map.addLayer(layer);
   }
 
-  public toClipboard() {
+  public toClipboard(): void {
     this.clipboard.copy(this.clickedLocation);
-    this.snackbar.open('Coordinadas copiadas a portapapeles', 'X', {duration: 3500})
+    this.snackbar.open('Coordinadas copiadas a portapapeles', 'X', {duration: 3500});
   }
 
-  private setSize(): void {
+  private setMapSize(): void {
     if (this.mapEl) {
       const styles = this.mapEl.style;
       styles.height = coerceCssPixelValue(this.height || DEFAULT_HEIGHT);
@@ -140,7 +166,7 @@ export class LocationComponent implements OnInit, AfterViewInit {
 
 const cssUnitsPattern = /([A-Za-z%]+)$/;
 
-function coerceCssPixelValue(value:any ): string {
+function coerceCssPixelValue(value: any): string {
   if (value == null) {
     return '';
   }
