@@ -5,11 +5,23 @@
           <h2 class="ocre">Localización elegida</h2>
         </div>
         <div class="col-auto">
-          <button mat-button (click)="toClipboard()"><mat-icon>content_copy</mat-icon></button>
+          <button mat-button matTooltip="Copiar coordenadas" (click)="toClipboard(true)"><mat-icon>content_copy</mat-icon></button>
         </div>
         <div class="col-auto">
           <h3>{{clickedLocation}}</h3>
         </div>
+      </div>
+      <div *ngIf="clickedLocation" class="row align-items-center">
+        <div class="col-auto">
+          <button mat-button matTooltip="Copiar URL" matToolTipShowDelay="500" (click)="toClipboard(false)"><mat-icon>content_copy</mat-icon></button>
+        </div>
+        <div class="col-auto">
+          <button mat-button matTooltip="Abrir en nueva ventana"  (click)="openTab()"><mat-icon>open_in_new</mat-icon></button>
+        </div>
+        <div class="col-auto">
+          <a style="cursor: pointer" (click)="openTab()">{{mapsUrl}}</a>
+        </div>
+
       </div>
       <div *ngIf="!clickedLocation">
         <h2 class="ocre">Elija un punto en el mapa</h2>
@@ -18,4 +30,5 @@
     </div>
 
   </div>
+  <div class="space"></div>
   <div id="map" class="map" (click)="catchCoordinates($event)"></div>

@@ -22,6 +22,7 @@ import {MatInputModule} from "@angular/material/input";
 import { LocationComponent } from './shared/components/location/location.component';
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { MapDialogComponent } from './shared/components/map-dialog/map-dialog.component';
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { MapDialogComponent } from './shared/components/map-dialog/map-dialog.co
     MatProgressSpinnerModule,
     MatInputModule,
     MatSnackBarModule,
+    MatTooltipModule
 
 
     // OSM

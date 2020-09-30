@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {LocationComponent} from '../../shared/components/location/location.component';
-import {MapDialogComponent} from '../../shared/components/map-dialog/map-dialog.component';
 
 @Component({
   selector: 'app-home',
@@ -17,21 +15,7 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // this.initMap();
-  }
-
-  ngAfterViewInit(): void {
 
   }
-
-  openMap(): void {
-      this.dialog.open(MapDialogComponent, {
-      width: '75%',
-      maxWidth: '90%'
-
-    });
-
-  }
-
 
 }
