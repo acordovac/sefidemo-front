@@ -30,6 +30,7 @@ import {FormControl} from "@angular/forms";
 import {Coordinate} from "ol/coordinate";
 import {NominatimResponse} from "../../models/nominatim-response";
 import {debounceTime, filter, switchMap, tap} from "rxjs/operators";
+import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 
 
 export const DEFAULT_HEIGHT = '500px';

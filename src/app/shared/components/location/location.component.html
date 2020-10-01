@@ -15,7 +15,8 @@
             [displayWith]="displayFn">
             <mat-option *ngFor = "let address of foundAddresses"
               [value] = "address.getCoordinate()"
-              (click)="renderSearchItem(address)">
+              (onSelectionChange)="renderSearchItem(address)"
+              >
               {{address.address}}
             </mat-option>
           </mat-autocomplete>
