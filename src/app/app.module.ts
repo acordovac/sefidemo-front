@@ -24,6 +24,7 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { MapDialogComponent } from './shared/components/map-dialog/map-dialog.component';
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatChipsModule} from '@angular/material/chips';
+import { MatAutocompleteModule} from "@angular/material/autocomplete";
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import {MatChipsModule} from '@angular/material/chips';
     MatSnackBarModule,
     MatTooltipModule,
     MatChipsModule,
+    MatAutocompleteModule,
 
 
     // OSM

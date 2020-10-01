@@ -18,7 +18,6 @@ import IconAnchorUnits from 'ol/style/IconAnchorUnits';
 import Interaction from 'ol/interaction/Interaction';
 import Collection from 'ol/Collection';
 import DragRotate from 'ol/interaction/DragRotate';
-import DoubleClickZoom from 'ol/interaction/DoubleClickZoom';
 import DragPan from 'ol/interaction/DragPan';
 import PinchRotate from 'ol/interaction/PinchRotate';
 import PinchZoom from 'ol/interaction/PinchZoom';
@@ -26,6 +25,11 @@ import KeyboardPan from 'ol/interaction/KeyboardPan';
 import KeyboardZoom from 'ol/interaction/KeyboardZoom';
 import MouseWheelZoom from 'ol/interaction/MouseWheelZoom';
 import DragZoom from 'ol/interaction/DragZoom';
+import {NominatimOsmService} from "../../../core/services/nominatim-osm/nominatim-osm.service";
+import {FormControl} from "@angular/forms";
+import {Coordinate} from "ol/coordinate";
+import {NominatimResponse} from "../../models/nominatim-response";
+import {debounceTime, filter, switchMap, tap} from "rxjs/operators";
 
 
 export const DEFAULT_HEIGHT = '500px';
@@ -34,6 +38,8 @@ export const DEFAULT_ZOOM = 16;
 export const CRUM_COORDINATES = [-96.935521, 19.551221]; // long lat
 export const GM_URL_BASE = 'https://www.google.com/maps/search/?api=1&';
 
+
+
 /**
  * Component to draw a OpenStreetMap style map with custom marker
  * a través de la api OpenLaayers
@@ -41,7 +47,7 @@ export const GM_URL_BASE = 'https://www.google.com/maps/search/?api=1&';
 @Component({
   selector: 'osm-location',
   templateUrl: './location.component.html',
-  styleUrls: ['./location.component.css']
+  styleUrls: ['./location.component.css'],
 })
 export class LocationComponent implements OnInit, AfterViewInit {
 
@@ -59,20 +65,24 @@ export class LocationComponent implements OnInit, AfterViewInit {
 
   private markerCounter = 1;
   public clickedLocation = '';
+  public displayAddress = '';
   public mapsUrl = '';
   public coordinates = [];
-
+  public searchInput = new FormControl('');
+  public foundAddresses: NominatimResponse[];
 
   constructor(
     private clipboard: Clipboard,
     private snackBar: MatSnackBar,
-    private elRef: ElementRef
+    private elRef: ElementRef,
+    private searchService: NominatimOsmService,
   ) { }
 
 
   ngOnInit(): void {
     this.mapEl = this.elRef.nativeElement.querySelector('#map');
     this.setMapSize(); // IMPORTANT to render map
+    this.nominatimSearch();
   }
 
   ngAfterViewInit(): void {
@@ -118,8 +128,8 @@ export class LocationComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Handler por double click, it will obtain the EPSG:3857 coordinates from an event,
-   * and transform it to EPSG:44326 format, readable by google maps
+   * Handler por double click, it will obtain the EPSG:3857 coordinates from the click event,
+   * and transform it to EPSG:44326 format, readable by google maps.
    * @param event the UI event
    */
   public catchCoordinates(event: any): void {
@@ -131,6 +141,7 @@ export class LocationComponent implements OnInit, AfterViewInit {
         'EPSG:3857',
         'EPSG:4326');
       this.clickedLocation = `${this.formatDecimals(this.coordinates[0])}, ${this.formatDecimals(this.coordinates[1])}`;
+      this.displayAddress = this.clickedLocation;
       this.mapsUrl = this.buildGMapsURL();
       this.renderMarker();
     }
@@ -138,7 +149,7 @@ export class LocationComponent implements OnInit, AfterViewInit {
 
   /**
    * @desc Read this instance's coordinates to create a Point and attempt to initialize a Feature
-   * with a custom icon. If a markerFeature already exists, it will update the feature with the created Point.
+   * with a custom icon. If a markerFeature already exists, it will update the feature with the newly created Point.
    */
   private renderMarker(): void {
     // parse coords from previous event catch
@@ -170,6 +181,48 @@ export class LocationComponent implements OnInit, AfterViewInit {
         new Point( olProj.fromLonLat(markerCoords) )
       );
     }
+  }
+
+  /**
+   * Setup a listener for the search input change, then consume the nominatim service to return matches
+   */
+  public nominatimSearch(): void {
+    this.searchInput.valueChanges.pipe(
+      debounceTime(500), // debounce user input to prevent too many requests
+      tap(value => this.foundAddresses = []),
+      filter(value => value != '' && value.length > 2), // prevent requests while value is empty or less than 3 chars long
+      switchMap(value => this.searchService.getCoordsFromOpenSearch(value))
+    ).subscribe( res => {
+      if (res.length > 0) {
+        this.foundAddresses = res;
+      } else {
+        this.foundAddresses = [];
+        this.snackBar.open('No se ha encontrado una dirección. Intente de nuevo', 'X', {duration: 3500});
+      }
+    });
+  }
+
+  /**
+   * Center map at this instance's coordinates
+   */
+  private setCenter() {
+    const view = this.map.getView();
+    view.setCenter(olProj.fromLonLat(this.coordinates));
+    view.setZoom(18);
+  }
+
+  /**
+   * handler to render markers from search input's auto complete options
+   * @param addressObj
+   */
+  renderSearchItem(addressObj: NominatimResponse) {
+    // set this instances coordinates
+    this.coordinates = addressObj.getCoordinate();
+    this.mapsUrl = this.buildGMapsURL();
+    this.renderMarker();
+    // set address display name in chip
+    this.displayAddress = addressObj.address;
+    this.setCenter();
   }
 
   public toClipboard(option: boolean): void {
@@ -207,7 +260,16 @@ export class LocationComponent implements OnInit, AfterViewInit {
     return parseFloat(coord).toFixed(8);
   }
 
+
+  /**
+   * Passes empty string to searchInput after choosing an option, in order to prevent firing unwanted search request
+   */
+  public displayFn(): string {
+    return '';
+  }
+
 }
+
 
 const cssUnitsPattern = /([A-Za-z%]+)$/;
 
