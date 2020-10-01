@@ -14,17 +14,28 @@ import Feature from 'ol/Feature';
 import * as olProj from 'ol/proj';
 import {transform} from 'ol/proj';
 import Point from 'ol/geom/Point';
-import IconAnchorUnits from "ol/style/IconAnchorUnits";
+import IconAnchorUnits from 'ol/style/IconAnchorUnits';
+import Interaction from 'ol/interaction/Interaction';
+import Collection from 'ol/Collection';
+import DragRotate from 'ol/interaction/DragRotate';
+import DoubleClickZoom from 'ol/interaction/DoubleClickZoom';
+import DragPan from 'ol/interaction/DragPan';
+import PinchRotate from 'ol/interaction/PinchRotate';
+import PinchZoom from 'ol/interaction/PinchZoom';
+import KeyboardPan from 'ol/interaction/KeyboardPan';
+import KeyboardZoom from 'ol/interaction/KeyboardZoom';
+import MouseWheelZoom from 'ol/interaction/MouseWheelZoom';
+import DragZoom from 'ol/interaction/DragZoom';
 
 
 export const DEFAULT_HEIGHT = '500px';
 export const DEFAULT_WIDTH = '500px';
 export const DEFAULT_ZOOM = 16;
 export const CRUM_COORDINATES = [-96.935521, 19.551221]; // long lat
-
+export const GM_URL_BASE = 'https://www.google.com/maps/search/?api=1&';
 
 /**
- * Componente que genera un mapa con imágenes de OpenStreetMap
+ * Component to draw a OpenStreetMap style map with custom marker
  * a través de la api OpenLaayers
  */
 @Component({
@@ -41,28 +52,27 @@ export class LocationComponent implements OnInit, AfterViewInit {
   @Input() height: string | number = DEFAULT_HEIGHT;
 
   private map: Map;
+  public mapEl: HTMLElement;
   private markerLayer: VectorLayer;
   private markerSource: VectorSource;
   private markerFeature: Feature;
-  private gmUrlBase = 'https://www.google.com/maps/search/?api=1&query='
-  private markerCounter = 1;
 
+  private markerCounter = 1;
   public clickedLocation = '';
   public mapsUrl = '';
-  public mapEl: HTMLElement;
   public coordinates = [];
 
 
   constructor(
     private clipboard: Clipboard,
-    private snackbar: MatSnackBar,
+    private snackBar: MatSnackBar,
     private elRef: ElementRef
   ) { }
 
 
   ngOnInit(): void {
     this.mapEl = this.elRef.nativeElement.querySelector('#map');
-    this.setMapSize(); // important to render map
+    this.setMapSize(); // IMPORTANT to render map
   }
 
   ngAfterViewInit(): void {
@@ -75,45 +85,66 @@ export class LocationComponent implements OnInit, AfterViewInit {
       target: 'map',
       layers: [
         new TileLayer({
-          preload: Infinity, // pre render lo res tiles
+          preload: Infinity, // preload low res tiles
            source: new OSM()
         }),
         this.markerLayer,
       ],
       view: new View({
-        projection: 'EPSG:3857', // se utiliza la projección default para cargar Tiles
+        projection: 'EPSG:3857', // default projection used for coordinate values
         center: olProj.fromLonLat(CRUM_COORDINATES),
         zoom: this.zoom
       }),
+      interactions: new Collection<Interaction>([
+        new DragRotate(),
+        // new DoubleClickZoom().setActive(false),  // omitted to disable
+        new DragPan(),
+        new PinchRotate(),
+        new PinchZoom(),
+        new KeyboardPan(),
+        new KeyboardZoom(),
+        new MouseWheelZoom(),
+        new DragZoom(),
+      ])
     });
   }
 
+  /**
+   * Initialize a Layer fot the marker
+   */
   private initMarkerLayer(): void {
     this.markerSource = new VectorSource();
-    this.markerLayer = new VectorLayer({source: this.markerSource,});
+    this.markerLayer = new VectorLayer({source: this.markerSource});
   }
 
+  /**
+   * Handler por double click, it will obtain the EPSG:3857 coordinates from an event,
+   * and transform it to EPSG:44326 format, readable by google maps
+   * @param event the UI event
+   */
   public catchCoordinates(event: any): void {
-    console.log(event.target);
-    if (event.target.tagName.includes('button')) {
-      console.warn('Its button!')
-    } else {
-      console.warn('Its map!')
+    // prevent rendering a marker when double click on a control
+    if (event.target.tagName !== 'BUTTON') {
+      // Parse to correct projection coordinate format
+      this.coordinates = transform(
+        this.map.getEventCoordinate(event),
+        'EPSG:3857',
+        'EPSG:4326');
+      this.clickedLocation = `${this.formatDecimals(this.coordinates[0])}, ${this.formatDecimals(this.coordinates[1])}`;
+      this.mapsUrl = this.buildGMapsURL();
+      this.renderMarker();
     }
-    // Se convierte a las coordenadas correctas
-    this.coordinates = transform(
-      this.map.getEventCoordinate(event),
-      'EPSG:3857',
-      'EPSG:4326');
-    this.clickedLocation = `${this.formatDecimals(this.coordinates[0])}, ${this.formatDecimals(this.coordinates[1])}`;
-    this.mapsUrl = `${this.gmUrlBase}${this.formatDecimals(this.coordinates[1])},${this.formatDecimals(this.coordinates[0])}`;
-    this.renderMarker();
   }
 
-
-  public renderMarker(): void {
-    const markerCoords = [parseFloat(this.formatDecimals(this.coordinates[0])), parseFloat(this.formatDecimals(this.coordinates[1]))]; // create coords format from previous catch
-    if (!this.markerFeature) { // initialize feature
+  /**
+   * @desc Read this instance's coordinates to create a Point and attempt to initialize a Feature
+   * with a custom icon. If a markerFeature already exists, it will update the feature with the created Point.
+   */
+  private renderMarker(): void {
+    // parse coords from previous event catch
+    const markerCoords = [parseFloat(this.formatDecimals(this.coordinates[0])), parseFloat(this.formatDecimals(this.coordinates[1]))];
+    if (!this.markerFeature) {
+      // initialize and set feature
       this.markerFeature = new Feature({
         geometry: new Point(olProj.fromLonLat(markerCoords)),
         name: 'marker' + this.markerCounter,
@@ -127,27 +158,29 @@ export class LocationComponent implements OnInit, AfterViewInit {
           anchorYUnits: IconAnchorUnits.PIXELS,
           src: 'assets/images/pinpoint2.png',
           scale: 0.05,
-
         }),
       });
+
       this.markerFeature.setStyle(iconStyle);
       this.markerSource.addFeature(this.markerFeature);
+
     } else {
-      this.markerFeature.setGeometry(new Point(olProj.fromLonLat(markerCoords)));
+      // update feature's Point
+      this.markerFeature.setGeometry(
+        new Point( olProj.fromLonLat(markerCoords) )
+      );
     }
   }
 
-  private formatDecimals(coord: string): string {
-    return parseFloat(coord).toFixed(8);
-  }
-
   public toClipboard(option: boolean): void {
-    if (option) {
-      this.clipboard.copy(this.clickedLocation);
-      this.snackbar.open('Coordinadas copiadas a portapapeles', 'X', {duration: 3500});
-    } else {
-      this.clipboard.copy(this.mapsUrl);
-      this.snackbar.open('URL de maps copiada a portapapeles', 'X', {duration: 3500});
+    if (this.clickedLocation) {
+      if (option) {
+        this.clipboard.copy(this.clickedLocation);
+        this.snackBar.open('Coordinadas copiadas a portapapeles', 'X', {duration: 3500});
+      } else {
+        this.clipboard.copy(this.mapsUrl);
+        this.snackBar.open('URL de maps copiada a portapapeles', 'X', {duration: 3500});
+      }
     }
   }
 
@@ -159,8 +192,19 @@ export class LocationComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openTab() {
+  /**
+   * Open new browser tab with generated google maps URL
+   */
+  public openTab(): void {
     window.open(this.mapsUrl, 'blank');
+  }
+
+  private buildGMapsURL(): string {
+    return `${GM_URL_BASE}query=${this.formatDecimals(this.coordinates[1])},${this.formatDecimals(this.coordinates[0])}`;
+  }
+
+  private formatDecimals(coord: string): string {
+    return parseFloat(coord).toFixed(8);
   }
 
 }

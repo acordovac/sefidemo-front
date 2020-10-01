@@ -1,5 +1,5 @@
-/* You can add global styles to this file, and also import other style files */
 @import 'bootstrap/dist/css/bootstrap-grid.min.css';
+/* You can add global styles to this file, and also import other style files */
 @import '../node_modules/ol/ol.css';
 
 html, body { height: 100%; background-color: #F9F9F9}
@@ -7,6 +7,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .space {
   height: 2em;
+}
+.halfspace {
+  height: 1em;
 }
 
 .ocre {
@@ -21,4 +24,24 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .mat-ssa-accent:hover {
   background-color: #754c24;
   color: #fff;
+}
+.contentt {
+  min-height: calc(100vh - 5em);
+}
+
+.footr {
+  width: 100%;
+  background-color: #d9b400;
+  height: 5em;
+  position: fixed;
+  /*bottom: 0px;*/
+  /*margin-top: -5em;*/
+  line-height: 50px;
+  padding: 0 20px;
+}
+
+.footr a {
+  color: white;
+  font-weight: bold;
+  font-size: 1.5em;
 }

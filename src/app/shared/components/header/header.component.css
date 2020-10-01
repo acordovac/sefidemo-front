@@ -1,13 +1,12 @@
 .header {
   background-color: #f2e9e0 !important;
   padding: 0.5em 0 ;
+  width: 100%;
 }
 
 .img-header {
   max-height: 3em;
 }
-
-
 
 .menu {
   background-color: #5c3327;

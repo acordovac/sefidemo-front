@@ -1,34 +1,44 @@
-  <div class="row justify-content-center">
+  <div class="row justify-content-center" style="background-color: white; padding: 1em;">
     <div class="col-xs-12 col-md-12 col-lg-12">
-      <div *ngIf="clickedLocation" class="row align-items-center">
-        <div class="col-sm-12 col-md-12 col-lg-12">
-          <h2 class="ocre">Localización elegida</h2>
+      <div class="row">
+        <div class="col-12">
+          <h2 class="ocre">{{ clickedLocation ? 'Localización elegida': 'Haga doble click un punto en el mapa'}}</h2>
         </div>
         <div class="col-auto">
-          <button mat-button matTooltip="Copiar coordenadas" (click)="toClipboard(true)"><mat-icon>content_copy</mat-icon></button>
-        </div>
-        <div class="col-auto">
-          <h3>{{clickedLocation}}</h3>
-        </div>
-      </div>
-      <div *ngIf="clickedLocation" class="row align-items-center">
-        <div class="col-auto">
-          <button mat-button matTooltip="Copiar URL" matToolTipShowDelay="500" (click)="toClipboard(false)"><mat-icon>content_copy</mat-icon></button>
-        </div>
-        <div class="col-auto">
-          <button mat-button matTooltip="Abrir en nueva ventana"  (click)="openTab()"><mat-icon>open_in_new</mat-icon></button>
-        </div>
-        <div class="col-auto">
-          <a style="cursor: pointer" (click)="openTab()">{{mapsUrl}}</a>
-        </div>
+          <mat-chip-list aria-label="Acciones del mapa" selectable="false">
+            <mat-chip
+              [disabled]="!clickedLocation"
+              (click)="toClipboard(true)">
+                <mat-icon>content_copy</mat-icon>Copiar Coordenadas
+            </mat-chip>
+            <mat-chip
+              [disabled]="!clickedLocation"
+              (click)="toClipboard(false)">
+                <mat-icon>content_copy</mat-icon>Copiar URL
+            </mat-chip>
+            <mat-chip *ngIf="clickedLocation"
+              matTooltip="Abrir google maps"
+              matTooltipPosition="above"
+              color="ssa-accent"
+              (click)="openTab()">
+                <mat-icon>open_in_new</mat-icon>{{clickedLocation}}
+            </mat-chip>
+          </mat-chip-list>
 
-      </div>
-      <div *ngIf="!clickedLocation">
-        <h2 class="ocre">Elija un punto en el mapa</h2>
-      </div>
-
+        </div>
+        <!--<div class="col-auto" *ngIf="clickedLocation">-->
+          <!--<div class="row" (click)="openTab()">-->
+            <!--<mat-icon>open_in_new</mat-icon>-->
+            <!--<h3 class="ocre"-->
+                <!--style="cursor: pointer; text-decoration: underline"-->
+                <!--matTooltip="Abrir en nueva ventana"-->
+                <!--matTooltipPosition="above">-->
+                  <!--{{clickedLocation}}-->
+            <!--</h3>-->
+          <!--</div>-->
+        <!--</div>-->
     </div>
+      <div class="halfspace"></div>
 
+    <div id="map" class="map" (dblclick)="catchCoordinates($event)"></div>
   </div>
-  <div class="space"></div>
-  <div id="map" class="map" (click)="catchCoordinates($event)"></div>

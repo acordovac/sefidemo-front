@@ -26,6 +26,7 @@
       true,
       "element",
       "app",
+      "osm",
       "kebab-case"
     ],
     "eofline": true,

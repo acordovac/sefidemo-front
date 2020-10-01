@@ -23,6 +23,7 @@ import { LocationComponent } from './shared/components/location/location.compone
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { MapDialogComponent } from './shared/components/map-dialog/map-dialog.component';
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatChipsModule} from '@angular/material/chips';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     MatProgressSpinnerModule,
     MatInputModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatChipsModule,
 
 
     // OSM
