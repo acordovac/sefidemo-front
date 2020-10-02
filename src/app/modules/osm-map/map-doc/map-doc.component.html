@@ -1,0 +1,224 @@
+
+<mat-card>
+  <div class="container">
+    <mat-card-header>
+      <mat-card-title>
+        <h2 class="ocre">Demo mapa OpenStreeMaps (OSM) con API de OpenLayers (OL)</h2>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row justify-content-center">
+        <div class="col-auto">
+          <button mat-raised-button color="ssa-accent" (click)="openMap()">Abrir ejemplo</button>
+        </div>
+      </div>
+      <div class="container">
+
+        <div class="row">
+          <div class="col-12">
+            <h3 class="ocre"> Implementación</h3>
+          </div>
+
+          <div class="col-12">
+            <p>Para la implementación de mapas se utilizan los paquetes y tipos para OpenLayers, también
+              es posible agregar los links CDN del script y estilos en el header, pero no es lo recomendado. Utilizaremos <b>npm</b>
+              para instalar las dependencias necesarias, en este caso con la versión <b>4.6.x</b>:</p>
+          </div>
+
+          <div class="col-12">
+            <div class="row">
+              <div class="col-6">
+                <pre>
+                npm i ol
+                npm i @types/ol
+                </pre>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-12">
+            <p>Para este ejemplo también se utilizó <b>bootstrap-grid</b> y los componentes de material angular</p>
+          </div>
+
+          <div class="col-12">
+            <div class="row">
+              <div class="col-6">
+                <pre>
+                  npm i bootstrap-4-grid
+                  npm i @angular/material
+                </pre>
+              </div>
+            </div>
+          </div>
+          <div class="halfspace"></div>
+          <div class="col-12">
+            <p>Para agregar la hoja de estilos del mapa usando los paquetes de node, la importaremos en el archivo <b>styles.css</b>
+              , así como los estilos de bootstrap:</p>
+          </div>
+
+          <div class="col-12">
+            <div class="row">
+              <div class="col-6">
+                <pre>
+                  // styles.css
+                  @import '../node_modules/ol/ol.css';
+                  @import 'bootstrap/dist/css/bootstrap-grid.min.css';
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="halfspace"></div>
+          <div class="col-12">
+            <p>Para dibujar el mapa, OL buscará un div con un <code class="inline-coded">id</code> que será definido en la inicialización de la instancia.
+              También es necesario agregarle <code class="inline-coded">class="map"</code> para que tome los estilos recién importados.</p>
+          </div>
+
+          <div class="col-12">
+            <div class="row">
+              <div class="col-6">
+                <pre>
+                  &#60;div id="map" class="map"&#62;&#60;/div&#62;
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <h4 class="ocre">Inicialización del mapa</h4>
+            </div>
+
+            <div class="col-12">
+              <p>Se necesita importar en el archivo <b>ts</b> los tipos OL instalados previamente </p>
+            </div>
+
+            <div class="col-12">
+              <div class="row">
+                <div class="col-6">
+                  <pre>
+                    // location.component.ts
+                    import Map from 'ol/Map';
+                    import View from 'ol/View';
+                    import VectorLayer from 'ol/layer/Vector';
+                    import VectorSource from 'ol/source/Vector';
+                    import Style from 'ol/style/Style';
+                    import Icon from 'ol/style/Icon';
+                    import OSM from 'ol/source/OSM';
+                    import TileLayer from 'ol/layer/Tile';
+                    import Feature from 'ol/Feature';
+                    import * as olProj from 'ol/proj';
+                    import &#123;transform&#125; from 'ol/proj';
+                  </pre>
+                </div>
+              </div>
+            </div>
+            <!---->
+
+            <div class="col-12">
+              <p><b>Importante:</b> Para que angular pueda crear el mapa, debe asignarse las propiedades <b>height</b> y <b>width</b> en el gancho <b>OnInit</b>.
+                También ocuparemos una función para detectar el elemento en el DOM con el id asignado:</p>
+            </div>
+            <div class="row ">
+              <div class="col-6">
+                <pre>
+                  public mapEl: HTMLElement;
+
+                  ngOnInit&#40;&#41;: void &#123;
+                    this.mapEl = this.elRef.nativeElement.querySelector&#40;'&#35;map'&#41;;
+                    this.setMapSize&#40;&#41;;
+                  &#125;
+
+                    private setMapSize(): void &#123;
+                      if (this.mapEl) &#123;
+                        const styles = this.mapEl.style;
+                        styles.height = coerceCssPixelValue(this.height || DEFAULT_HEIGHT);
+                        styles.width = coerceCssPixelValue(this.width || DEFAULT_WIDTH);
+                      &#125;
+                    &#125;
+
+                </pre>
+              </div>
+            </div>
+            <!---->
+            <div class="col-12">
+              <p>Se definen también constantes y unas funciones fuera de la clase typescript :</p>
+            </div>
+            <div class="row ">
+              <div class="col-6">
+                <pre>
+                  // Fuera de la clase en el archivo location.component.ts
+
+                  export const DEFAULT_HEIGHT = '500px';
+                  export const DEFAULT_WIDTH = '500px';
+                  export const DEFAULT_ZOOM = 16;
+                  export const CRUM_COORDINATES = [-96.935521, 19.551221]; // long lat
+                  export const GM_URL_BASE = 'https://www.google.com/maps/search/?api=1&';
+
+
+                  const cssUnitsPattern = /([A-Za-z%]+)$/;
+
+                  function coerceCssPixelValue(value: any): string &#123;
+                    if (value == null) &#123;
+                      return '';
+                    &#125;
+                    return cssUnitsPattern.test(value) ? value : `$&#123;value&#125;px`;
+                  &#125;
+
+                </pre>
+              </div>
+            </div>
+            <!---->
+            <div class="col-12">
+              <p>Para inicializar la instancia del mapa de manera segura, se utiliza el gancho <b>AfterViewInit</b>:</p>
+            </div>
+            <div class="row ">
+              <div class="col-6">
+                <pre>
+                 ngAfterViewInit(): void &#123;
+                  this.initMarkerLayer(); // setup vectorLayer for marker
+                  this.initMap(); // wait to safely initialize
+                &#1235;
+
+                  private initMap(): void &#123;
+                    this.map = new Map(&#123;
+                      target: 'map',
+                      layers: [
+                        new TileLayer(&#123;
+                          preload: Infinity, // preload low res tiles
+                           source: new OSM()
+                        &#125;),
+                        this.markerLayer,
+                      ],
+                      view: new View(&#123;
+                        projection: 'EPSG:3857', // default projection used for coordinate values
+                        center: olProj.fromLonLat(CRUM_COORDINATES),
+                        zoom: this.zoom
+                      &#125;),
+                      interactions: new Collection	&#60;Interaction&#61;([
+                        new DragRotate(),
+                        // new DoubleClickZoom().setActive(false),  // omitted to disable
+                        new DragPan(),
+                        new PinchRotate(),
+                        new PinchZoom(),
+                        new KeyboardPan(),
+                        new KeyboardZoom(),
+                        new MouseWheelZoom(),
+                        new DragZoom(),
+                      ])
+                    &#125;);
+                  &#125;
+
+                </pre>
+              </div>
+            </div>
+            <!---->
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </div>
+</mat-card>
+
+

@@ -25,12 +25,10 @@ import KeyboardPan from 'ol/interaction/KeyboardPan';
 import KeyboardZoom from 'ol/interaction/KeyboardZoom';
 import MouseWheelZoom from 'ol/interaction/MouseWheelZoom';
 import DragZoom from 'ol/interaction/DragZoom';
-import {NominatimOsmService} from "../../../core/services/nominatim-osm/nominatim-osm.service";
-import {FormControl} from "@angular/forms";
-import {Coordinate} from "ol/coordinate";
-import {NominatimResponse} from "../../models/nominatim-response";
-import {debounceTime, filter, switchMap, tap} from "rxjs/operators";
-import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
+import {NominatimOsmService} from '../../../core/services/nominatim-osm/nominatim-osm.service';
+import {FormControl} from '@angular/forms';
+import {NominatimResponse} from '../../models/nominatim-response';
+import {debounceTime, filter, switchMap, tap} from 'rxjs/operators';
 
 
 export const DEFAULT_HEIGHT = '500px';
@@ -43,7 +41,7 @@ export const GM_URL_BASE = 'https://www.google.com/maps/search/?api=1&';
 
 /**
  * Component to draw a OpenStreetMap style map with custom marker
- * a través de la api OpenLaayers
+ * using OpenLayers API and Nominatim based search
  */
 @Component({
   selector: 'osm-location',
@@ -206,7 +204,7 @@ export class LocationComponent implements OnInit, AfterViewInit {
   /**
    * Center map at this instance's coordinates
    */
-  private setCenter() {
+  private setCenter(): void {
     const view = this.map.getView();
     view.setCenter(olProj.fromLonLat(this.coordinates));
     view.setZoom(18);
@@ -216,7 +214,7 @@ export class LocationComponent implements OnInit, AfterViewInit {
    * handler to render markers from search input's auto complete options
    * @param addressObj
    */
-  renderSearchItem(addressObj: NominatimResponse) {
+  public renderSearchItem(addressObj: NominatimResponse): void {
     // set this instances coordinates
     this.coordinates = addressObj.getCoordinate();
     this.mapsUrl = this.buildGMapsURL();

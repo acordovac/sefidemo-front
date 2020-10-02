@@ -25,6 +25,8 @@ import { MapDialogComponent } from './shared/components/map-dialog/map-dialog.co
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatChipsModule} from '@angular/material/chips';
 import { MatAutocompleteModule} from "@angular/material/autocomplete";
+import {ChartsModule} from "ng2-charts";
+import { MapDocComponent } from './modules/osm-map/map-doc/map-doc.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +38,7 @@ import { MatAutocompleteModule} from "@angular/material/autocomplete";
     LoginComponent,
     LocationComponent,
     MapDialogComponent,
+    MapDocComponent,
   ],
   imports: [
     BrowserModule,
@@ -58,6 +61,7 @@ import { MatAutocompleteModule} from "@angular/material/autocomplete";
     MatTooltipModule,
     MatChipsModule,
     MatAutocompleteModule,
+    ChartsModule,
 
 
     // OSM
