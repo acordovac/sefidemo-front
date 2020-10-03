@@ -9,3 +9,7 @@
 .inline-coded {
   background-color: aliceblue;
 }
+
+#w74 {
+  white-space: pre-line;
+}

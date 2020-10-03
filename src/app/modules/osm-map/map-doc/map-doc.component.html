@@ -7,96 +7,139 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <div class="row justify-content-center">
-        <div class="col-auto">
-          <button mat-raised-button color="ssa-accent" (click)="openMap()">Abrir ejemplo</button>
+      <div class="container-">
+        <div class="row justify-content-center">
+          <div class="col-auto">
+            <button mat-raised-button color="ssa-accent" (click)="openMap()">Abrir ejemplo</button>
+          </div>
         </div>
-      </div>
-      <div class="container">
+        <div class="container">
 
-        <div class="row">
-          <div class="col-12">
-            <h3 class="ocre"> Implementación</h3>
-          </div>
+          <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <h3 class="ocre">Implementación</h3>
+            </div>
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <h5 class="ocre">Dependencias</h5>
+            </div>
 
-          <div class="col-12">
-            <p>Para la implementación de mapas se utilizan los paquetes y tipos para OpenLayers, también
-              es posible agregar los links CDN del script y estilos en el header, pero no es lo recomendado. Utilizaremos <b>npm</b>
-              para instalar las dependencias necesarias, en este caso con la versión <b>4.6.x</b>:</p>
-          </div>
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <p class="#w74">Para la implementación de mapas se utilizan los paquetes y tipos para OpenLayers, también
+                es posible agregar los links CDN del script y estilos en el header, pero no es lo recomendado. Utilizaremos <b>npm</b>
+                para instalar las dependencias necesarias, en este caso con la versión <b>4.6.x</b>:</p>
+            </div>
 
-          <div class="col-12">
-            <div class="row">
-              <div class="col-6">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <div class="row">
+                <div class="col-6">
                 <pre>
                 npm i ol
                 npm i @types/ol
                 </pre>
+                </div>
               </div>
             </div>
-          </div>
 
 
-          <div class="col-12">
-            <p>Para este ejemplo también se utilizó <b>bootstrap-grid</b> y los componentes de material angular</p>
-          </div>
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <p class="#w74">Para este ejemplo también se utilizó <b>bootstrap-grid</b> y los componentes de material angular</p>
+            </div>
 
-          <div class="col-12">
-            <div class="row">
-              <div class="col-6">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <div class="row">
+                <div class="col-6">
                 <pre>
                   npm i bootstrap-4-grid
                   npm i @angular/material
                 </pre>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="halfspace"></div>
-          <div class="col-12">
-            <p>Para agregar la hoja de estilos del mapa usando los paquetes de node, la importaremos en el archivo <b>styles.css</b>
-              , así como los estilos de bootstrap:</p>
-          </div>
 
-          <div class="col-12">
-            <div class="row">
-              <div class="col-6">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <div class="row">
+                <div class="col-6">
+                <pre>
+                  //  material modules
+                  MatDialogModule,
+                  FormsModule,
+                  ReactiveFormsModule,
+                  MatButtonModule,
+                  MatIconModule,
+                  MatInputModule,
+                  MatSnackBarModule,
+                  MatTooltipModule,
+                  MatChipsModule,
+                  MatAutocompleteModule,
+                </pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="halfspace"></div>
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <p class="#w74">Para agregar la hoja de estilos del mapa usando los paquetes de node, la importaremos en el archivo <b>styles.css</b>
+                , así como los estilos de bootstrap:</p>
+            </div>
+
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <div class="row">
+                <div class="col-6">
                 <pre>
                   // styles.css
                   @import '../node_modules/ol/ol.css';
                   @import 'bootstrap/dist/css/bootstrap-grid.min.css';
                 </pre>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="halfspace"></div>
-          <div class="col-12">
-            <p>Para dibujar el mapa, OL buscará un div con un <code class="inline-coded">id</code> que será definido en la inicialización de la instancia.
-              También es necesario agregarle <code class="inline-coded">class="map"</code> para que tome los estilos recién importados.</p>
-          </div>
+            <div class="halfspace"></div>
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <p class="#w74">Para dibujar el mapa, OL buscará un div con un <code class="inline-coded">id</code> que será definido
+                en la inicialización de la instancia. También es necesario agregarle <code class="inline-coded">class="map"</code>
+                para que tome los estilos recién importados.</p>
+            </div>
 
-          <div class="col-12">
-            <div class="row">
-              <div class="col-6">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <div class="row">
+                <div class="col-6">
                 <pre>
                   &#60;div id="map" class="map"&#62;&#60;/div&#62;
                 </pre>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div class="row">
-            <div class="col-12">
-              <h4 class="ocre">Inicialización del mapa</h4>
+            <!---->
+            <div class="halfspace"></div>
+            <div class="col-sm-12 col-md-12 col-lg-12">
+              <p class="#w74">La plantilla será luego utilizada por su selector <b>&#60;osm-location&#62;</b>,</p>
+              <p class="#w74">tal como el el componente&#60;MapDialogComponent&#62;, el cuál solo es un wrapper del mapa para mostrarlo
+                en una ventana modal de material.</p>
             </div>
 
-            <div class="col-12">
-              <p>Se necesita importar en el archivo <b>ts</b> los tipos OL instalados previamente </p>
-            </div>
-
-            <div class="col-12">
+            <div class="col-sm-12 col-md-12 col-lg-12">
               <div class="row">
                 <div class="col-6">
+                <pre>
+                  &#60;div id="map" class="map"&#62;&#60;/div&#62;
+                </pre>
+                </div>
+              </div>
+            </div>
+            <!---->
+            <div class="row">
+              <div class="col-sm-12 col-md-12 col-lg-12">
+                <h4 class="ocre">Inicialización del mapa</h4>
+              </div>
+
+              <div class="col-sm-12 col-md-12 col-lg-12">
+                <p class="#w74">Se necesita importar en el archivo <b>ts</b> los tipos OL instalados previamente </p>
+              </div>
+
+              <div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="row">
+                  <div class="col-6">
                   <pre>
                     // location.component.ts
                     import Map from 'ol/Map';
@@ -111,17 +154,20 @@
                     import * as olProj from 'ol/proj';
                     import &#123;transform&#125; from 'ol/proj';
                   </pre>
+                  </div>
                 </div>
               </div>
-            </div>
-            <!---->
+              <!---->
+              <div>
 
-            <div class="col-12">
-              <p><b>Importante:</b> Para que angular pueda crear el mapa, debe asignarse las propiedades <b>height</b> y <b>width</b> en el gancho <b>OnInit</b>.
-                También ocuparemos una función para detectar el elemento en el DOM con el id asignado:</p>
-            </div>
-            <div class="row ">
-              <div class="col-6">
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                  <p class="#w74"><b>Importante:</b> Para que angular pueda crear el mapa, debe asignarse las propiedades
+                    <b>height</b> y <b>width</b> en el gancho <b>OnInit</b>.</p>
+                  <p class="#w74">También ocuparemos una función para detectar el elemento en el DOM con el id asignado:</p>
+                </div>
+              </div>
+              <div class="row ">
+                <div class="col-6">
                 <pre>
                   public mapEl: HTMLElement;
 
@@ -133,20 +179,20 @@
                     private setMapSize(): void &#123;
                       if (this.mapEl) &#123;
                         const styles = this.mapEl.style;
-                        styles.height = coerceCssPixelValue(this.height || DEFAULT_HEIGHT);
-                        styles.width = coerceCssPixelValue(this.width || DEFAULT_WIDTH);
+                        // set styles
                       &#125;
                     &#125;
 
                 </pre>
+                </div>
               </div>
-            </div>
-            <!---->
-            <div class="col-12">
-              <p>Se definen también constantes y unas funciones fuera de la clase typescript :</p>
-            </div>
-            <div class="row ">
-              <div class="col-6">
+              <!---->
+              <div class="col-sm-12 col-md-12 col-lg-12">
+                <p class="#w74">Se definen también constantes y unas funciones fuera de la clase typescript para la conversión de los
+                  valores input del selector <code class="inline-coded">osm-location</code>:</p>
+              </div>
+              <div class="row ">
+                <div class="col-6">
                 <pre>
                   // Fuera de la clase en el archivo location.component.ts
 
@@ -167,14 +213,14 @@
                   &#125;
 
                 </pre>
+                </div>
               </div>
-            </div>
-            <!---->
-            <div class="col-12">
-              <p>Para inicializar la instancia del mapa de manera segura, se utiliza el gancho <b>AfterViewInit</b>:</p>
-            </div>
-            <div class="row ">
-              <div class="col-6">
+              <!---->
+              <div class="col-sm-12 col-md-12 col-lg-12">
+                <p class="#w74">Para inicializar la instancia del mapa de manera segura, se utiliza el gancho <b>AfterViewInit</b>:</p>
+              </div>
+              <div class="row ">
+                <div class="col-6">
                 <pre>
                  ngAfterViewInit(): void &#123;
                   this.initMarkerLayer(); // setup vectorLayer for marker
@@ -198,7 +244,7 @@
                       &#125;),
                       interactions: new Collection	&#60;Interaction&#61;([
                         new DragRotate(),
-                        // new DoubleClickZoom().setActive(false),  // omitted to disable
+                        // new DoubleClickZoom().setActive(false),  // omitted to disable: see Note # 1
                         new DragPan(),
                         new PinchRotate(),
                         new PinchZoom(),
@@ -211,9 +257,136 @@
                   &#125;
 
                 </pre>
+                </div>
+                <div class="row">
+
+                  <div class="col-sm-12 col-md-12 col-lg-12">
+                    <p class="#w74">*La propiedad <b>interactions</b> contiene una lista <code class="inline-coded">(ol.Collection)</code> de interacciones,
+                      las cuales definen la reacción a la entrada del usuario.  </p>
+                  </div>
+                </div>
               </div>
+              <!---->
+              <div class="col-sm-12 col-md-12 col-lg-12">
+                <h4 class="ocre">Marcadores</h4>
+              </div>
+              <div class="col-8">
+                <p class="text-body">En OL, los componentes son dibujados por capas o <b>Layer</b>. Las imágenes de mapas de OSM son pintadas sobre una capa, y los marcadores no son la excepción.</p>
+                <p class="#w74">Los marcadores son una objeto de tipo <b>Feature</b> al que se le aplica un estilo <b>IconStyle</b> con una imagen personalizada,
+                  además de un objeto de tipo <b>Point</b> que recibe las coordenadas. Se envolverá como un <b>VectorSource</b> que después pasaremos a la capa.</p>
+              </div>
+
+              <div class="col-sm-12 col-md-12 col-lg-12">
+                <p class="#w74">Los métodos <b>catchCoordinates</b> y <b>renderMarker</b> son los principales encargados de crear marcadores.</p>
+              </div>
+              <div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="row">
+                  <div class="col-6">
+                <pre>
+                  private renderMarker(): void &#123;
+                    // parse coords from previous event catch
+                    const markerCoords =  // omitted code
+                    if (!this.markerFeature) &#123;
+                      // initialize and set feature
+                      // ommitted code
+
+                    &#125; else &#123;
+                      // update feature's Point
+                      this.markerFeature.setGeometry(
+                        new Point( olProj.fromLonLat(markerCoords) )
+                      );
+                    &#125;
+                  &#125;
+                </pre>
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <div class="col-sm-12 col-md-12 col-lg-12">
+                <h4 class="ocre">Barra de búsqueda</h4>
+              </div>
+              <div class="col-8">
+                <p>Está implementada mediante un servicio de datos abierto, nominatim</p>
+                <p>La API de nominatim se utiliza en un servicio de angular, <b>NominatimOsmService</b>.</p>
+                <p>Configurada con los parámetros necesarios para retornar la búsqueda, los resultados por nombre
+                se pasan a un componente autocomplete de angular.</p>
+                <p>El encargado de la petición es el método <b>nominatimSearch</b>, el cual agrega una subscripción
+                a los cambios del campo de búsqueda.</p>
+              </div>
+
+              <div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="row">
+                  <div class="col-6">
+                <pre>
+                  ngOnInit(): void  &#123;
+                  // omitted code
+                    this.nominatimSearchListener();
+                   &#125;
+
+                  public nominatimSearchListener(): void &#123;
+                    this.searchInput.valueChanges.pipe(
+                      // debounce user input to prevent too many requests
+                      debounceTime(500),
+                      // reset autocomplete options
+                      tap(value => this.foundAddresses = []),
+                      // prevent requests while value is empty or less than 3 chars long
+                      filter(value => value !== '' && value.length > 2),
+                      // passes observable stream to search API
+                      switchMap(value => this.searchService.getCoordsFromOpenSearch(value)),
+                      // unsubscribe on destroy
+                      takeUntil(this.destroyerSub),
+                    ).subscribe( res => &#123;
+                      // validate, set values and return user confirmation or error
+                    &#125;);
+                  &#125;
+
+                </pre>
+                  </div>
+                </div>
+              </div>
+              <!---->
             </div>
-            <!---->
+          </div>
+        </div>
+        <div class="space"></div>
+        <div class="space"></div>
+        <div class="col-11"><mat-divider></mat-divider></div>
+        <div class="space"></div>
+        <div class="space"></div>
+        <div class="row">
+          <div class="col-sm-12 col-md-12 col-lg-12">
+            <h5 class="ocre">NOTAS</h5>
+          </div>
+          <p class="#w74">Como versión 1.0 de esta implementación hay aspectos técnicos entre la API y su integración con angular
+            que aún continúan en desarrollo.</p>
+          <p class="#w74">La versión actual contiene varias soluciones entre la web y los foros.</p>
+          <div class="col-sm-12 col-md-12 col-lg-12">
+            <h6 class="ocre">Nota #1</h6>
+          </div>
+          <div class="col-6">
+            <p class="#w74">El comportamiento esperado sería agregar un marcador al hacer click, sin embargo un evento básico este interfiere a falta de un
+              handler suficientemente complejo para un evento símil al de la gran G</p>
+            <p class="#w74">Como solución rápida, se sitúa el marcador cuando el usuario de doble click en el mapa.
+              Esto causaba un conflicto con el disparador de zoom, que sin embargo todavía puede lograrse con la rueda del ratón o los controles del mapa.
+              Por eso, al inicializar se le pasa la colección completa, excepto la interacción correspondiente a <b>DoubleClickZoom</b> para desactivarla.
+              Más información en la documentación oficial.</p>
+
+            <pre>
+                  private renderMarker(): void &#123;
+                    // parse coords from previous event catch
+                    const markerCoords =  // omitted code
+                    if (!this.markerFeature) &#123;
+                      // initialize and set feature
+                      // ommitted code
+
+                    &#125; else &#123;
+                      // update feature's Point
+                      this.markerFeature.setGeometry(
+                        new Point( olProj.fromLonLat(markerCoords) )
+                      );
+                    &#125;
+                  &#125;
+                </pre>
           </div>
         </div>
       </div>

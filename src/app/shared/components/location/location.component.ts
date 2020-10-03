@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit} from '@angular/core';
 import {Clipboard} from '@angular/cdk/clipboard';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
@@ -28,7 +28,8 @@ import DragZoom from 'ol/interaction/DragZoom';
 import {NominatimOsmService} from '../../../core/services/nominatim-osm/nominatim-osm.service';
 import {FormControl} from '@angular/forms';
 import {NominatimResponse} from '../../models/nominatim-response';
-import {debounceTime, filter, switchMap, tap} from 'rxjs/operators';
+import {debounceTime, filter, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 
 export const DEFAULT_HEIGHT = '500px';
@@ -48,7 +49,7 @@ export const GM_URL_BASE = 'https://www.google.com/maps/search/?api=1&';
   templateUrl: './location.component.html',
   styleUrls: ['./location.component.css'],
 })
-export class LocationComponent implements OnInit, AfterViewInit {
+export class LocationComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() lat: number;
   @Input() lon: number;
@@ -70,6 +71,8 @@ export class LocationComponent implements OnInit, AfterViewInit {
   public searchInput = new FormControl('');
   public foundAddresses: NominatimResponse[];
 
+  private destroyerSub: Subject<boolean> = new Subject();
+
   constructor(
     private clipboard: Clipboard,
     private snackBar: MatSnackBar,
@@ -81,12 +84,16 @@ export class LocationComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.mapEl = this.elRef.nativeElement.querySelector('#map');
     this.setMapSize(); // IMPORTANT to render map
-    this.nominatimSearch();
+    this.nominatimSearchListener();
   }
 
   ngAfterViewInit(): void {
     this.initMarkerLayer(); // setup vectorLayer for marker
     this.initMap(); // wait to safely initialize
+  }
+
+  ngOnDestroy(): void {
+    this.destroyerSub.next(true);
   }
 
   private initMap(): void {
@@ -151,8 +158,11 @@ export class LocationComponent implements OnInit, AfterViewInit {
    * with a custom icon. If a markerFeature already exists, it will update the feature with the newly created Point.
    */
   private renderMarker(): void {
-    // parse coords from previous event catch
-    const markerCoords = [parseFloat(this.formatDecimals(this.coordinates[0])), parseFloat(this.formatDecimals(this.coordinates[1]))];
+    // parse coordinates from previous event catch
+    const markerCoords = [
+      parseFloat(this.formatDecimals(this.coordinates[0])),
+      parseFloat(this.formatDecimals(this.coordinates[1]))
+    ];
     if (!this.markerFeature) {
       // initialize and set feature
       this.markerFeature = new Feature({
@@ -185,12 +195,13 @@ export class LocationComponent implements OnInit, AfterViewInit {
   /**
    * Setup a listener for the search input change, then consume the nominatim service to return matches
    */
-  public nominatimSearch(): void {
+  public nominatimSearchListener(): void {
     this.searchInput.valueChanges.pipe(
       debounceTime(500), // debounce user input to prevent too many requests
       tap(value => this.foundAddresses = []),
-      filter(value => value != '' && value.length > 2), // prevent requests while value is empty or less than 3 chars long
-      switchMap(value => this.searchService.getCoordsFromOpenSearch(value))
+      filter(value => value !== '' && value.length > 2), // prevent requests while value is empty or less than 3 chars long
+      switchMap(value => this.searchService.getCoordsFromOpenSearch(value)),
+      takeUntil(this.destroyerSub),
     ).subscribe( res => {
       if (res.length > 0) {
         this.foundAddresses = res;
@@ -212,7 +223,7 @@ export class LocationComponent implements OnInit, AfterViewInit {
 
   /**
    * handler to render markers from search input's auto complete options
-   * @param addressObj
+   * @param addressObj Nominatim based search output, in json format
    */
   public renderSearchItem(addressObj: NominatimResponse): void {
     // set this instances coordinates
