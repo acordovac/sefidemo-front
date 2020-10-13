@@ -5,7 +5,9 @@
 export const environment = {
   production: false,
   api: {
-    host: 'http://localhost:8080/sefidemo-back',
+    // host: 'http://localhost:8080/sefidemo-back',
+    host: 'http://localhost:8080',
+
   },
   nominatim: {
     key: 'PAdi7QoGoJcADONjvAXODo1XRXvmayum',
