@@ -113,7 +113,7 @@ export class LocationComponent implements OnInit, AfterViewInit, OnDestroy {
       }),
       interactions: new Collection<Interaction>([
         new DragRotate(),
-        // new DoubleClickZoom().setActive(false),  // omitted to disable
+        // new DoubleClickZoom(),  // omitted to disable
         new DragPan(),
         new PinchRotate(),
         new PinchZoom(),

@@ -225,7 +225,7 @@
                  ngAfterViewInit(): void &#123;
                   this.initMarkerLayer(); // setup vectorLayer for marker
                   this.initMap(); // wait to safely initialize
-                &#1235;
+                &#125;
 
                   private initMap(): void &#123;
                     this.map = new Map(&#123;
@@ -244,7 +244,7 @@
                       &#125;),
                       interactions: new Collection	&#60;Interaction&#61;([
                         new DragRotate(),
-                        // new DoubleClickZoom().setActive(false),  // omitted to disable: see Note # 1
+                        // new DoubleClickZoom(),  // omitted to disable: see Note # 1
                         new DragPan(),
                         new PinchRotate(),
                         new PinchZoom(),
@@ -258,12 +258,12 @@
 
                 </pre>
                 </div>
-                <div class="row">
+              </div>
+              <div class="row">
 
-                  <div class="col-sm-12 col-md-12 col-lg-12">
-                    <p class="#w74">*La propiedad <b>interactions</b> contiene una lista <code class="inline-coded">(ol.Collection)</code> de interacciones,
-                      las cuales definen la reacción a la entrada del usuario.  </p>
-                  </div>
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                  <p>*La propiedad <b>interactions</b> contiene una lista <code class="inline-coded">(ol.Collection)</code> de interacciones,
+                    las cuales definen la reacción a la entradas y/o gestos del usuario.</p>
                 </div>
               </div>
               <!---->
@@ -306,9 +306,8 @@
                 <h4 class="ocre">Barra de búsqueda</h4>
               </div>
               <div class="col-8">
-                <p>Está implementada mediante un servicio de datos abierto, nominatim</p>
-                <p>La API de nominatim se utiliza en un servicio de angular, <b>NominatimOsmService</b>.</p>
-                <p>Configurada con los parámetros necesarios para retornar la búsqueda, los resultados por nombre
+                <p>Está implementada mediante un servicio de datos abierto, nominatim.Se envuelve la API en un servicio de angular, <b>NominatimOsmService</b></p>
+                <p>y se configura con los parámetros necesarios para retornar la búsqueda, los resultados por nombre
                 se pasan a un componente autocomplete de angular.</p>
                 <p>El encargado de la petición es el método <b>nominatimSearch</b>, el cual agrega una subscripción
                 a los cambios del campo de búsqueda.</p>
@@ -364,9 +363,9 @@
             <h6 class="ocre">Nota #1</h6>
           </div>
           <div class="col-6">
-            <p class="#w74">El comportamiento esperado sería agregar un marcador al hacer click, sin embargo un evento básico este interfiere a falta de un
-              handler suficientemente complejo para un evento símil al de la gran G</p>
-            <p class="#w74">Como solución rápida, se sitúa el marcador cuando el usuario de doble click en el mapa.
+            <p>El comportamiento esperado sería agregar un marcador al hacer un click, sin embargo este evento interfiere
+              con otras funcionalidades. A falta de un handler suficientemente complejo para para una experiencia similar a la de la gran G,
+              como solución rápida, se sitúa el marcador cuando el usuario de doble click en el mapa.
               Esto causaba un conflicto con el disparador de zoom, que sin embargo todavía puede lograrse con la rueda del ratón o los controles del mapa.
               Por eso, al inicializar se le pasa la colección completa, excepto la interacción correspondiente a <b>DoubleClickZoom</b> para desactivarla.
               Más información en la documentación oficial.</p>
